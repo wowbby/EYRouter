@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'EYRouter_Example' do
+  pod 'EYRouter', :path => '../'
+
+  target 'EYRouter_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
