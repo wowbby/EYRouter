@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol LogicRedirecterProtocol;
 extern NSString *const EYRouterParameterURL;
 extern NSString *const EYRouterParameterCompletion;
 extern NSString *const EYRouterParameterUserInfo;
@@ -16,6 +17,7 @@ typedef void (^EYRouterHandle)(NSDictionary *parameter);
 typedef id (^EYRouterObjectHandle)(NSDictionary *parameter);
 
 @interface EYRouter : NSObject
++ (void)addLogicRedirecter:(id<LogicRedirecterProtocol>)redirecter;
 + (void)registerURL:(NSString *)url toHandle:(EYRouterHandle)handle;
 + (void)registerURL:(NSString *)url toObjectHandle:(EYRouterObjectHandle)handle;
 + (void)deregisterURL:(NSString *)url;

@@ -7,8 +7,9 @@
 //
 
 #import "EYViewController.h"
-#import <EYRouter/EYRouter.h>
-@interface EYViewController ()
+#import "EYRouter.h"
+#import "UserAuthRedirecter.h"
+@interface EYViewController () <LoginStateProviderProtocol>
 
 @end
 
@@ -22,9 +23,16 @@
     //
     //           }];
 
-    id obj = [EYRouter objectForURL:@"obj://test" userInfo:nil];
-}
+    [EYRouter openURL:@"mgj://beauty/def"
+         withUserInfo:nil
+           completion:^(id result){
 
+           }];
+}
+- (BOOL)isLogin
+{
+    return NO;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -32,8 +40,12 @@
 
     //    NSArray * arr = [self pathComponentsFromURL:@"mgj://beauty/abc/edf?value=1&vlaue2=2"];
 
+    id<LogicRedirecterProtocol> redi = (id<LogicRedirecterProtocol>)[[UserAuthRedirecter alloc] initWithLoginStateProvider:self];
 
-    [EYRouter registerURL:@"mgj://beauty/def?id&name"
+    [EYRouter addLogicRedirecter:redi];
+
+
+    [EYRouter registerURL:@"mgj://beauty/def?userOauth=1"
                  toHandle:^(NSDictionary *parameter) {
 
                    void (^completion)(id result) = parameter[EYRouterParameterCompletion];
@@ -44,11 +56,6 @@
 
                  }];
 
-    [EYRouter registerURL:@"obj://test"
-           toObjectHandle:^id(NSDictionary *parameter) {
-
-             return @(1);
-           }];
 
     //    [EYRouter deregisterURL:@"mgj://beauty/def"];
 }

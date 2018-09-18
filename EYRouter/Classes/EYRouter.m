@@ -6,7 +6,7 @@
 //
 
 #import "EYRouter.h"
-
+#import "AutoRedirecter.h"
 static NSString *const kEYRouterHandleKey = @"kEYRouterHandle";
 static NSString *const kEYRouterParametersKey = @"kEYRouterParameters";
 static NSString *const kEmptyString = @"";
@@ -23,6 +23,7 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
 
 @interface EYRouter ()
 @property (nonatomic, strong) NSMutableDictionary *routers;
+@property (nonatomic, strong) AutoRedirecter *redirecter;
 @end
 
 
@@ -33,6 +34,7 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
     if (self = [super init]) {
 
         self.routers = [@{} mutableCopy];
+        self.redirecter = [AutoRedirecter new];
     }
     return self;
 }
@@ -46,7 +48,10 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
     });
     return router;
 }
-
++ (void)addLogicRedirecter:(id<LogicRedirecterProtocol>)redirecter
+{
+    [[[self shareRouter] redirecter] addRedirecter:redirecter];
+}
 + (void)registerURL:(NSString *)url toHandle:(EYRouterHandle)handle
 {
 
@@ -79,11 +84,18 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
 
     NSDictionary<NSString *, NSString *> *queryParameters = [[self shareRouter] queryParametersFromURL:URL];
 
-    NSArray<NSString *> *registerParameterNames = subRoute[kEYRouterParametersKey];
+    NSDictionary<NSString *, NSString *> *registerParameterNames = subRoute[kEYRouterParametersKey];
+
+
+    NSString *redirecterurl = [[[self shareRouter] redirecter] autoDirecterURL:URL registerParameters:registerParameterNames];
+
+    if (![redirecterurl isEqualToString:URL]) {
+        [self openURL:redirecterurl withUserInfo:userInfo completion:completion];
+    }
 
     NSMutableDictionary *parameters = [@{} mutableCopy];
 
-    [registerParameterNames enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+    [registerParameterNames enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
       [parameters setObject:queryParameters[obj] ?: kEmptyString forKey:obj];
     }];
 
@@ -143,7 +155,7 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
 - (void)addURL:(NSString *)url handle:(EYRouterHandle)handle
 {
     NSMutableDictionary *subRouters = [self addURL:url];
-    NSArray<NSString *> *parameters = [self registerParametersFromURL:url];
+    NSDictionary<NSString *, NSString *> *parameters = [self registerParametersFromURL:url];
     if (subRouters && handle) {
         subRouters[kEYRouterHandleKey] = [handle copy];
     }
@@ -154,7 +166,7 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
 - (void)addURL:(NSString *)url objectHandle:(EYRouterObjectHandle)handle
 {
     NSMutableDictionary *subRouters = [self addURL:url];
-    NSArray<NSString *> *parameters = [self registerParametersFromURL:url];
+    NSDictionary<NSString *, NSString *> *parameters = [self registerParametersFromURL:url];
     if (subRouters && handle) {
         subRouters[kEYRouterHandleKey] = [handle copy];
     }
@@ -178,13 +190,16 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
 
     return subRouters;
 }
-- (NSArray *)registerParametersFromURL:(NSString *)url
+- (NSDictionary<NSString *, NSString *> *)registerParametersFromURL:(NSString *)url
 {
     NSURLComponents *components = [NSURLComponents componentsWithString:url];
 
-    if (components.query.length) {
-        NSArray<NSString *> *querySegments = [components.query componentsSeparatedByString:kparameterJoinedString];
-        return querySegments;
+    if (components.queryItems.count) {
+        NSMutableDictionary *parameters = [@{} mutableCopy];
+        [components.queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+          [parameters setObject:obj.value ?: kEmptyString forKey:obj.name];
+        }];
+        return parameters;
     }
     return nil;
 }
