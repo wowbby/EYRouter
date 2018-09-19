@@ -23,11 +23,19 @@
     //
     //           }];
 
-    [EYRouter openURL:@"mgj://beauty/def"
-         withUserInfo:nil
-           completion:^(id result){
+    //    [EYRouter openURL:@"mgj://beauty/def"
+    //         withUserInfo:nil
+    //           completion:^(id result){
+    //
+    //           }];
 
-           }];
+    UIViewController *obj = [EYRouter objectForURL:@"EY://nextViewController"];
+
+    [self presentViewController:obj
+                       animated:YES
+                     completion:^{
+
+                     }];
 }
 - (BOOL)isLogin
 {
@@ -44,17 +52,31 @@
 
     [EYRouter addLogicRedirecter:redi];
 
+    //    [EYRouter registerURL:@"oath://login" toHandle:^(NSDictionary *parameter) {
+    //
+    //    }];
 
-    [EYRouter registerURL:@"mgj://beauty/def?userOauth=1"
-                 toHandle:^(NSDictionary *parameter) {
-
-                   void (^completion)(id result) = parameter[EYRouterParameterCompletion];
-
-                   if (completion) {
-                       completion(self);
-                   }
-
-                 }];
+    //    [EYRouter registerURL:@"oath://login" toObjectHandle:^id(NSDictionary *parameter) {
+    //
+    //        return @"1";
+    //    }];
+    //
+    //    [EYRouter registerURL:@"mgj://beauty/def?userOauth=1" toObjectHandle:^id(NSDictionary *parameter) {
+    //
+    //        return @"2";
+    //    }];
+    //
+    //
+    //    [EYRouter registerURL:@"mgj://beauty/def?userOauth=1"
+    //                 toHandle:^(NSDictionary *parameter) {
+    //
+    //                   void (^completion)(id result) = parameter[EYRouterParameterCompletion];
+    //
+    //                   if (completion) {
+    //                       completion(self);
+    //                   }
+    //
+    //                 }];
 
 
     //    [EYRouter deregisterURL:@"mgj://beauty/def"];

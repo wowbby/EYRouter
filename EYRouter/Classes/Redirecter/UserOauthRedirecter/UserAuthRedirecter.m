@@ -38,7 +38,7 @@ static NSString *const koathParameterValueKey = @"1";
 - (NSInteger)level
 {
 
-    return 10;
+    return 0;
 }
 
 - (BOOL)isNeedRedirectURL:(NSDictionary<NSString *, NSString *> *)registerParameters

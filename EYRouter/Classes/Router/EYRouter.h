@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-
 @protocol LogicRedirecterProtocol;
 extern NSString *const EYRouterParameterURL;
 extern NSString *const EYRouterParameterCompletion;

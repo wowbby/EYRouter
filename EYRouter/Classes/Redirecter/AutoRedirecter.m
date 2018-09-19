@@ -31,18 +31,23 @@
         return;
     }
     [self.redirecters addObject:redirecter];
+    [self sortRedirecters];
 }
 - (NSString *)autoDirecterURL:(NSString *)url registerParameters:(NSDictionary<NSString *, NSString *> *)parameters
 {
-
-    NSString *targetURL = url;
     for (id<LogicRedirecterProtocol> logicRedirecter in self.redirecters) {
         if ([logicRedirecter isNeedRedirectURL:parameters]) {
-            targetURL = [logicRedirecter redirectURL:url];
+            url = [logicRedirecter redirectURL:url];
             continue;
         }
     }
-    return targetURL;
+    return url;
 }
+- (void)sortRedirecters
+{
 
+    [self.redirecters sortUsingComparator:^NSComparisonResult(id<LogicRedirecterProtocol> _Nonnull obj1, id<LogicRedirecterProtocol> _Nonnull obj2) {
+      return obj1.level < obj2.level;
+    }];
+}
 @end

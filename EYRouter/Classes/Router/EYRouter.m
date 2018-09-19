@@ -86,20 +86,19 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
 
     NSDictionary<NSString *, NSString *> *registerParameterNames = subRoute[kEYRouterParametersKey];
 
+    NSString *redirecterUrl = [[self shareRouter] autoDirecterURL:URL registerParameters:registerParameterNames];
+    if (![redirecterUrl isEqualToString:URL]) {
 
-    NSString *redirecterurl = [[[self shareRouter] redirecter] autoDirecterURL:URL registerParameters:registerParameterNames];
+        [self openURL:redirecterUrl withUserInfo:userInfo completion:completion];
 
-    if (![redirecterurl isEqualToString:URL]) {
-        [self openURL:redirecterurl withUserInfo:userInfo completion:completion];
+        return;
     }
 
     NSMutableDictionary *parameters = [@{} mutableCopy];
 
     [registerParameterNames enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
-      [parameters setObject:queryParameters[obj] ?: kEmptyString forKey:obj];
+      [parameters setObject:obj forKey:queryParameters[obj] ?: kEmptyString];
     }];
-
-    EYRouterHandle handle = subRoute[kEYRouterHandleKey];
 
     if (completion) {
         parameters[EYRouterParameterCompletion] = completion;
@@ -107,7 +106,8 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
     if (userInfo) {
         parameters[EYRouterParameterUserInfo] = userInfo;
     }
-    if (handle) {
+    if (subRoute && subRoute[kEYRouterHandleKey]) {
+        EYRouterHandle handle = subRoute[kEYRouterHandleKey];
         handle(parameters);
     }
 }
@@ -124,12 +124,16 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
 
     NSDictionary<NSString *, NSString *> *queryParameters = [[self shareRouter] queryParametersFromURL:url];
 
-    NSArray<NSString *> *registerParameterNames = subRoute[kEYRouterParametersKey];
+    NSDictionary<NSString *, NSString *> *registerParameters = subRoute[kEYRouterParametersKey];
 
+    NSString *redirecterUrl = [[self shareRouter] autoDirecterURL:url registerParameters:registerParameters];
+    if (![redirecterUrl isEqualToString:url]) {
+
+        return [self objectForURL:redirecterUrl userInfo:userInfo];
+    }
     NSMutableDictionary *parameters = [@{} mutableCopy];
-
-    [registerParameterNames enumerateObjectsUsingBlock:^(NSString *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
-      [parameters setObject:queryParameters[obj] ?: kEmptyString forKey:obj];
+    [registerParameters enumerateKeysAndObjectsUsingBlock:^(NSString *_Nonnull key, NSString *_Nonnull obj, BOOL *_Nonnull stop) {
+      [parameters setObject:obj forKey:queryParameters[obj] ?: kEmptyString];
     }];
 
     EYRouterObjectHandle handle = subRoute[kEYRouterHandleKey];
@@ -268,5 +272,10 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
     NSString *components = [urlComponents componentsJoinedByString:kpathJoinedString];
     NSDictionary *route = [self.routers valueForKeyPath:components];
     return route;
+}
+- (NSString *)autoDirecterURL:(NSString *)URL registerParameters:(NSDictionary<NSString *, NSString *> *)registerParameters
+{
+
+    return [[self redirecter] autoDirecterURL:URL registerParameters:registerParameters];
 }
 @end
