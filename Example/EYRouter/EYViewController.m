@@ -29,13 +29,7 @@
     //
     //           }];
 
-    UIViewController *obj = [EYRouter objectForURL:@"EY://nextViewController"];
-
-    [self presentViewController:obj
-                       animated:YES
-                     completion:^{
-
-                     }];
+    [EYRouter openURL:@"EY://adb/edf"];
 }
 - (BOOL)isLogin
 {
@@ -46,40 +40,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
 
-    //    NSArray * arr = [self pathComponentsFromURL:@"mgj://beauty/abc/edf?value=1&vlaue2=2"];
+    [EYRouter registerURL:@"EY://adb"
+                 toHandle:^(NSDictionary *parameter){
 
-    id<LogicRedirecterProtocol> redi = (id<LogicRedirecterProtocol>)[[UserAuthRedirecter alloc] initWithLoginStateProvider:self];
-
-    [EYRouter addLogicRedirecter:redi];
-
-    //    [EYRouter registerURL:@"oath://login" toHandle:^(NSDictionary *parameter) {
-    //
-    //    }];
-
-    //    [EYRouter registerURL:@"oath://login" toObjectHandle:^id(NSDictionary *parameter) {
-    //
-    //        return @"1";
-    //    }];
-    //
-    //    [EYRouter registerURL:@"mgj://beauty/def?userOauth=1" toObjectHandle:^id(NSDictionary *parameter) {
-    //
-    //        return @"2";
-    //    }];
-    //
-    //
-    //    [EYRouter registerURL:@"mgj://beauty/def?userOauth=1"
-    //                 toHandle:^(NSDictionary *parameter) {
-    //
-    //                   void (^completion)(id result) = parameter[EYRouterParameterCompletion];
-    //
-    //                   if (completion) {
-    //                       completion(self);
-    //                   }
-    //
-    //                 }];
-
-
-    //    [EYRouter deregisterURL:@"mgj://beauty/def"];
+                 }];
 }
 
 - (void)didReceiveMemoryWarning

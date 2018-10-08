@@ -328,7 +328,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-EYRouter_Example/Pods-EYRouter_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-EYRouter_Example/Pods-EYRouter_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/EYRouter/EYRouter.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -337,7 +337,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EYRouter_Example/Pods-EYRouter_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EYRouter_Example/Pods-EYRouter_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A4E7B0CF1EE9406D15300ED2 /* [CP] Check Pods Manifest.lock */ = {

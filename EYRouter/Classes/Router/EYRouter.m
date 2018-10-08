@@ -271,6 +271,11 @@ NSString *const EYRouterParameterUserInfo = @"EYRouterParameterUserInfo";
     NSArray<NSString *> *urlComponents = [self urlComponentsFromURL:url];
     NSString *components = [urlComponents componentsJoinedByString:kpathJoinedString];
     NSDictionary *route = [self.routers valueForKeyPath:components];
+    if (!route && urlComponents.count > 1) {
+        NSString *lastPath = [NSString stringWithFormat:@"%@%@", kpathSeparator, urlComponents.lastObject];
+        url = [url stringByReplacingOccurrencesOfString:lastPath withString:@""];
+        route = [self subRouteWithURL:url];
+    }
     return route;
 }
 - (NSString *)autoDirecterURL:(NSString *)URL registerParameters:(NSDictionary<NSString *, NSString *> *)registerParameters
