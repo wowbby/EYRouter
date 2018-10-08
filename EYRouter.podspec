@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'EYRouter'
-  s.version          = '0.1.5'
+  s.version          = '0.1.6'
   s.summary          = 'A short description of EYRouter.'
 
 # This description is used to generate tags and improve search results.
@@ -32,12 +32,15 @@ TODO: Add long description of the pod here.
 
   #s.source_files = 'EYRouter/Classes/**/*'
 
-  s.subspec 'Router' do |ss|
-  ss.source_files = 'EYRouter/Classes/Router/*'
-  end
   s.subspec 'Redirecter' do |ss|
-  ss.source_files = 'EYRouter/Classes/Redirecter/**/*'
-  end
+    ss.source_files = 'EYRouter/Classes/Redirecter/**/*'
+    end
+
+  s.subspec 'Router' do |ss|
+    ss.source_files = 'EYRouter/Classes/Router/*'
+    ss.dependency 'EYRouter/Redirecter'
+    end
+
   
   # s.resource_bundles = {
   #   'EYRouter' => ['EYRouter/Assets/*.png']
